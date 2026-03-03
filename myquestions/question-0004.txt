@@ -1,0 +1,29 @@
+Problema (Sklearn): Importancia de variables por permutación en regresión
+
+Implementa una función en Python llamada:
+
+    top_features_permutation_importance(X_train, y_train, X_test, y_test, n_top=5, random_state=0)
+
+Descripción:
+Debes:
+1) Entrenar un modelo RandomForestRegressor(random_state=random_state) con (X_train, y_train).
+2) Calcular permutation_importance del modelo sobre (X_test, y_test) con:
+   - n_repeats=10
+   - random_state=random_state
+   - scoring="r2"
+3) Obtener las importancias medias (result.importances_mean).
+4) Retornar un diccionario con:
+   - "top_idx": lista de índices (int) de las n_top features con mayor importancia media,
+               ordenadas de mayor a menor importancia; en empates, menor índice primero.
+   - "top_importances": numpy.ndarray con las importancias medias correspondientes a top_idx,
+                        redondeadas a 6 decimales.
+   - "r2_test": float, el R2 del modelo en X_test, redondeado a 6 decimales.
+
+Parámetros:
+- X_train, X_test: numpy.ndarray (n_samples, n_features)
+- y_train, y_test: numpy.ndarray (n_samples,)
+- n_top: int
+- random_state: int
+
+Salida:
+- dict con top_idx, top_importances, r2_test.

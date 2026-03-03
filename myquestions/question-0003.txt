@@ -1,0 +1,27 @@
+Problema (Sklearn): Clustering con DBSCAN y resumen de clusters
+
+Implementa una función en Python llamada:
+
+    clusterizar_dbscan(X, eps, min_samples)
+
+Descripción:
+Dado un arreglo numpy X de shape (n_samples, n_features), debes:
+
+1) Estandarizar X con StandardScaler (fit_transform en X).
+2) Entrenar DBSCAN(eps=eps, min_samples=min_samples) sobre los datos escalados.
+3) Obtener labels = modelo.labels_ (ruido es -1).
+4) Retornar un diccionario con:
+   - "labels": numpy.ndarray de shape (n_samples,)
+   - "n_clusters": int (número de clusters excluyendo el ruido -1)
+   - "n_noise": int (cantidad de puntos con label -1)
+
+Restricciones:
+- Usa solo numpy y sklearn.
+
+Parámetros:
+- X: numpy.ndarray
+- eps: float
+- min_samples: int
+
+Salida:
+- dict con labels, n_clusters, n_noise.

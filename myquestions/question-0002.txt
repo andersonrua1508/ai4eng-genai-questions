@@ -1,0 +1,39 @@
+Problema (Pandas): Alinear lecturas de sensor con eventos usando merge_asof
+
+Implementa una función en Python llamada:
+
+    alinear_sensor_eventos(sensor_df, eventos_df, time_col, value_col, event_time_col, direction="backward")
+
+Descripción:
+Tienes:
+- sensor_df: lecturas frecuentes con columnas [time_col, value_col]
+- eventos_df: eventos puntuales con columna [event_time_col]
+
+Debes:
+1) Convertir sensor_df[time_col] y eventos_df[event_time_col] a datetime (errors="coerce").
+2) Eliminar filas con fechas inválidas (NaT) en ambas tablas.
+3) Ordenar sensor_df por time_col y eventos_df por event_time_col.
+4) Hacer un merge_asof para asociar a cada evento la lectura de sensor más cercana según direction:
+   - backward: última lectura <= evento
+   - forward: primera lectura >= evento
+   - nearest: la más cercana (pandas)
+5) Retornar un DataFrame con columnas:
+   ["event_time", "sensor_time", "sensor_value", "lag_seconds"]
+   donde:
+   - event_time = eventos_df[event_time_col]
+   - sensor_time = timestamp emparejado del sensor (puede ser NaN si no hay match)
+   - sensor_value = valor emparejado (puede ser NaN)
+   - lag_seconds = (event_time - sensor_time) en segundos (si no hay match, NaN)
+
+Ordenar por event_time ascendente y resetear índice.
+
+Parámetros:
+- sensor_df: pandas.DataFrame
+- eventos_df: pandas.DataFrame
+- time_col: str
+- value_col: str
+- event_time_col: str
+- direction: str ("backward","forward","nearest")
+
+Salida:
+- pandas.DataFrame con el alineamiento descrito.
