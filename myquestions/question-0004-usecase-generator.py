@@ -1,65 +1,83 @@
 import random
 import numpy as np
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.inspection import permutation_importance
-from sklearn.metrics import r2_score
+from sklearn.model_selection import KFold
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.dummy import DummyClassifier
+from sklearn.metrics import accuracy_score, f1_score
 
-def generar_caso_de_uso_top_features_permutation_importance():
+def generar_caso_de_uso_evaluar_con_baseline_kfold():
     """
     Genera un caso de uso aleatorio (input/output esperado)
-    para top_features_permutation_importance(X_train, y_train, X_test, y_test, n_top=5, random_state=0)
+    para evaluar_con_baseline_kfold(X, y, k=5, random_state=0)
     """
     rng = np.random.default_rng()
 
-    n_train = random.randint(120, 260)
-    n_test = random.randint(60, 140)
-    n_features = random.randint(5, 14)
+    n_samples = random.randint(140, 360)
+    n_features = random.randint(4, 14)
 
-    X_train = rng.normal(size=(n_train, n_features))
-    X_test = rng.normal(size=(n_test, n_features))
+    X = rng.normal(size=(n_samples, n_features))
 
-    rel = rng.choice(np.arange(n_features), size=random.randint(2, 4), replace=False)
-    w = rng.normal(loc=0.0, scale=3.0, size=n_features)
-    nonrel = np.setdiff1d(np.arange(n_features), rel)
-    w[nonrel] *= 0.2
+    # señal lineal + ruido -> clasificación binaria
+    w = rng.normal(size=n_features)
+    logits = X @ w + rng.normal(scale=0.6, size=n_samples)
 
-    y_train = X_train @ w + rng.normal(scale=rng.uniform(0.5, 1.5), size=n_train)
-    y_test = X_test @ w + rng.normal(scale=rng.uniform(0.5, 1.5), size=n_test)
+    # umbral para crear desbalance moderado a veces
+    thr = np.quantile(logits, random.choice([0.45, 0.5, 0.55]))
+    y = (logits > thr).astype(int)
 
-    n_top = int(random.choice([3, 5, 7]))
+    k = int(random.choice([3, 4, 5, 6]))
+    if k < 2:
+        k = 2
     random_state = int(random.randint(0, 50))
 
     input_data = {
-        "X_train": X_train.copy(),
-        "y_train": y_train.copy(),
-        "X_test": X_test.copy(),
-        "y_test": y_test.copy(),
-        "n_top": n_top,
+        "X": X.copy(),
+        "y": y.copy(),
+        "k": k,
         "random_state": random_state,
     }
 
-    # ---- Ground truth ----
-    model = RandomForestRegressor(random_state=random_state)
-    model.fit(X_train, y_train)
+    # ----- Ground truth -----
+    kf = KFold(n_splits=k, shuffle=True, random_state=random_state)
 
-    pred = model.predict(X_test)
-    r2 = r2_score(y_test, pred)
+    lift_acc = []
+    lift_f1 = []
+    acc_lr = []
+    acc_dummy = []
 
-    pi = permutation_importance(
-        model, X_test, y_test,
-        n_repeats=10,
-        random_state=random_state,
-        scoring="r2"
-    )
+    for train_idx, test_idx in kf.split(X):
+        X_train, X_test = X[train_idx], X[test_idx]
+        y_train, y_test = y[train_idx], y[test_idx]
 
-    imp = pi.importances_mean.astype(float)
-    order = sorted(range(n_features), key=lambda i: (-imp[i], i))
-    top_idx = order[:n_top]
-    top_imps = np.round(imp[top_idx], 6)
+        scaler = StandardScaler()
+        X_train_s = scaler.fit_transform(X_train)
+        X_test_s = scaler.transform(X_test)
+
+        lr = LogisticRegression(max_iter=1000, random_state=random_state)
+        lr.fit(X_train_s, y_train)
+        pred_lr = lr.predict(X_test_s)
+
+        dum = DummyClassifier(strategy="most_frequent", random_state=random_state)
+        dum.fit(X_train_s, y_train)
+        pred_d = dum.predict(X_test_s)
+
+        a_lr = accuracy_score(y_test, pred_lr)
+        a_d = accuracy_score(y_test, pred_d)
+
+        f_lr = f1_score(y_test, pred_lr, average="binary", zero_division=0)
+        f_d = f1_score(y_test, pred_d, average="binary", zero_division=0)
+
+        acc_lr.append(a_lr)
+        acc_dummy.append(a_d)
+        lift_acc.append(a_lr - a_d)
+        lift_f1.append(f_lr - f_d)
 
     output_data = {
-        "top_idx": [int(i) for i in top_idx],
-        "top_importances": top_imps,
-        "r2_test": float(np.round(r2, 6)),
+        "lift_accuracy_mean": float(np.round(np.mean(lift_acc), 6)),
+        "lift_f1_mean": float(np.round(np.mean(lift_f1), 6)),
+        "logreg_accuracy_mean": float(np.round(np.mean(acc_lr), 6)),
+        "dummy_accuracy_mean": float(np.round(np.mean(acc_dummy), 6)),
     }
+
     return input_data, output_data
