@@ -1,9 +1,3 @@
-# Programación con LLMs - Fase 1
-
-Nombre: Anderson Rúa  
-Correo institucional: anderson.rua@udea.edu.co  
-GitHub: andersonrua1508
-
 Problema (Pandas): Expandir columna JSON y calcular métricas por usuario
 
 Implementa una función en Python llamada:
