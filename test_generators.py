@@ -12,8 +12,8 @@ def main():
     generators = [
         ("question_0001", "myquestions/question-0001-usecase-generator.py", "generar_caso_de_uso_expandir_json_y_resumir"),
         ("question_0002", "myquestions/question-0002-usecase-generator.py", "generar_caso_de_uso_alinear_sensor_eventos"),
-        ("question_0003", "myquestions/question-0003-usecase-generator.py", "generar_caso_de_uso_clusterizar_dbscan"),
-        ("question_0004", "myquestions/question-0004-usecase-generator.py", "generar_caso_de_uso_top_features_permutation_importance")
+        ("question_0003", "myquestions/question-0003-usecase-generator.py", "generar_caso_de_uso_curva_k_distances"),
+        ("question_0004", "myquestions/question-0004-usecase-generator.py", "generar_caso_de_uso_evaluar_con_baseline_kfold")
     ]
 
     all_passed = True
