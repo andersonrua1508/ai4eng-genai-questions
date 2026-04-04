@@ -1,0 +1,31 @@
+Problema (Pandas): Expandir columna JSON y calcular métricas por usuario
+
+Implementa una función en Python llamada:
+
+    expandir_json_y_resumir(df, json_col, user_col)
+
+Descripción:
+Recibes un DataFrame df donde la columna df[json_col] contiene strings JSON (o dicts) con claves numéricas.
+
+Debes:
+1) Convertir cada elemento de df[json_col] a dict:
+   - Si es string, usar json.loads
+   - Si ya es dict, usarlo directamente
+   - Si es NaN/None o es un string inválido, trátalo como dict vacío {}
+2) Expandir esos dicts a columnas (una columna por clave), usando 0 cuando falte una clave.
+3) Mantener df[user_col] y eliminar filas donde user_col sea NaN.
+4) Calcular y retornar un DataFrame con una fila por usuario y estas columnas:
+   - "user": el identificador
+   - "num_rows": número de filas del usuario en df (después de filtrar user_col NaN)
+   - "sum_all_keys": suma total de todos los valores numéricos de todas las claves (acumulado sobre filas del usuario)
+   - "mean_keys_per_row": promedio de cuántas claves (dict) aparecen por fila para ese usuario
+
+El resultado debe estar ordenado por "user" ascendente y con índice reiniciado.
+
+Parámetros:
+- df: pandas.DataFrame
+- json_col: str
+- user_col: str
+
+Salida:
+- pandas.DataFrame con ["user","num_rows","sum_all_keys","mean_keys_per_row"]

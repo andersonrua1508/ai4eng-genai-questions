@@ -1,0 +1,43 @@
+Problema (Sklearn): Validación cruzada manual con baseline DummyClassifier y cálculo de lift
+
+Implementa una función en Python llamada:
+
+    evaluar_con_baseline_kfold(X, y, k=5, random_state=0)
+
+Descripción:
+Debes evaluar un clasificador LogisticRegression y compararlo contra un baseline DummyClassifier
+usando validación cruzada manual con KFold.
+
+Pasos:
+1) Crear un objeto KFold con:
+   - n_splits=k
+   - shuffle=True
+   - random_state=random_state
+2) Para cada fold:
+   - Separar X_train, X_test, y_train, y_test
+   - Estandarizar X usando StandardScaler (fit SOLO en X_train; transform en train y test)
+   - Entrenar LogisticRegression(max_iter=1000, random_state=random_state)
+   - Entrenar DummyClassifier(strategy="most_frequent", random_state=random_state)
+   - Obtener predicciones de ambos modelos en X_test
+   - Calcular accuracy y f1_score (average="binary") para ambos
+   - Calcular lift_accuracy = accuracy_logreg - accuracy_dummy
+   - Calcular lift_f1 = f1_logreg - f1_dummy
+3) Retornar un diccionario con:
+   - "lift_accuracy_mean": promedio de lift_accuracy (redondeado a 6 decimales)
+   - "lift_f1_mean": promedio de lift_f1 (redondeado a 6 decimales)
+   - "logreg_accuracy_mean": promedio accuracy de LogisticRegression (redondeado a 6 decimales)
+   - "dummy_accuracy_mean": promedio accuracy de DummyClassifier (redondeado a 6 decimales)
+
+Parámetros:
+- X: numpy.ndarray (n_samples, n_features)
+- y: numpy.ndarray (n_samples,) con clases 0/1
+- k: int (>=2)
+- random_state: int
+
+Salida:
+- dict con las métricas promedio descritas.
+
+Restricciones:
+- No usar cross_val_score.
+- Implementar el ciclo de folds manualmente.
+- Usar solo numpy y sklearn.

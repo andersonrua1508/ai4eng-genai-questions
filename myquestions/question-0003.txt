@@ -1,0 +1,31 @@
+Problema (Sklearn): Curva k-distance para estimar eps en DBSCAN (NearestNeighbors)
+
+Implementa una función en Python llamada:
+
+    curva_k_distances(X, k=5)
+
+Descripción:
+En DBSCAN, una forma común de elegir eps es analizar la curva k-distance:
+para cada punto, se calcula la distancia a su k-ésimo vecino más cercano y luego
+se ordenan esas distancias de menor a mayor.
+
+Debes:
+1) Recibir X como numpy.ndarray de shape (n_samples, n_features).
+2) Estandarizar X con StandardScaler (fit_transform sobre X).
+3) Usar NearestNeighbors(n_neighbors=k) para ajustar sobre X escalado.
+4) Obtener las distancias a los vecinos con kneighbors (distances).
+   - distances tendrá shape (n_samples, k)
+   - La distancia k-distance de cada punto es distances[:, k-1]
+5) Ordenar esas k-distances de forma ascendente.
+6) Retornar un diccionario con:
+   - "k": int
+   - "k_distances_sorted": numpy.ndarray de shape (n_samples,), redondeado a 6 decimales
+
+Parámetros:
+- X: numpy.ndarray
+- k: int (>=2)
+
+Salida:
+- dict con k y k_distances_sorted.
+Restricciones:
+- Usa solo numpy y sklearn.
